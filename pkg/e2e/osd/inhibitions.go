@@ -96,7 +96,14 @@ var _ = ginkgo.Describe(inhibitionsTestName, label.Operators, func() {
 					// match the source
 					if rule.SourceMatch["alertname"] == test.expectedSource {
 						// match the target
-						rulePresent = rulePresent || rule.TargetMatchRE["alertname"].Regexp.Match([]byte(test.expectedTarget))
+						if re, ok := rule.TargetMatchRE["alertname"]; ok && re.Regexp.Match([]byte(test.expectedTarget)) {
+							rulePresent = true
+							break
+						}
+						if targetAlert, ok := rule.TargetMatchRE["alertname"]; ok && targetAlert == test.expectedTarget {
+							rulePresent = true
+							break
+						}
 					}
 				}
 			}
